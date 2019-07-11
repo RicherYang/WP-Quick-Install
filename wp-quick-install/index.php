@@ -5,9 +5,9 @@ Author: Jonathan Buttigieg
 Contributors: Richer Yang
 Contributors: Julio Potier
 Script URI: http://wp-quick-install.com
-Version: 1.5.1
+Version: 1.5.2
 Licence: GPLv3
-Last Update: 2019-07-02
+Last Update: 2019-07-11
 */
 
 @set_time_limit( 0 );
