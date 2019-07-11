@@ -49,3 +49,41 @@ function parse_db_host( $host ) {
 
 	return array( $host, $port, $socket, $is_ipv6 );
 }
+
+function download_translation($language, $translation_url, $translation_path) {
+	// 擷取本地化資訊，便能取得清單以便下載
+	$translations_repo = file_get_contents( $translation_url );
+
+	if ( $translations_repo && $translations = json_decode( $translations_repo ) ) {
+
+		// 取得本地化套件資訊
+		$translations_index = array_column($translations->translations, 'language');
+		$translations_index = array_search($language, $translations_index);
+		if( $translations_index !== false ) {
+			$translation = $translations->translations[$translations_index];
+
+			// 確認本地化檔案是否存在
+			if ( file_exists( $translation_path ) ) {
+
+				// 取得本地化檔案更新時間
+				$filemtime = filemtime( $translation_path );
+
+				// 確認本地化檔案是否需要更新
+				if( strtotime( $translation->updated ) > $filemtime ) {
+					$download_file = true;
+				} else {
+					$download_file = false;
+				}
+			} else {
+				$download_file = true;
+			}
+
+			if( $download_file ) {
+				// 下載最新版本地化檔案
+				if ( $download_link = file_get_contents( $translation->package ) ) {
+					file_put_contents( $translation_path, $download_link );
+				}
+			}
+		}
+	}
+}
