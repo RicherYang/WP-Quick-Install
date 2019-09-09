@@ -12,11 +12,11 @@ Last Update: 2019-07-11
 
 @set_time_limit( 0 );
 
-define( 'WP_API_CORE'					, 'https://api.wordpress.org/core/version-check/1.7/?locale=' );
-define( 'WPQI_CACHE_PATH'				, 'cache/' );
-define( 'WPQI_CACHE_CORE_PATH'			, WPQI_CACHE_PATH . 'core/' );
-define( 'WPQI_CACHE_THEMES_PATH'		, WPQI_CACHE_PATH . 'themes/' );
-define( 'WPQI_CACHE_PLUGINS_PATH'		, WPQI_CACHE_PATH . 'plugins/' );
+define( 'WP_API_CORE'				, 'https://api.wordpress.org/core/version-check/1.7/?locale=' );
+define( 'WPQI_CACHE_PATH'			, 'cache/' );
+define( 'WPQI_CACHE_CORE_PATH'		, WPQI_CACHE_PATH . 'core/' );
+define( 'WPQI_CACHE_THEMES_PATH'	, WPQI_CACHE_PATH . 'themes/' );
+define( 'WPQI_CACHE_PLUGINS_PATH'	, WPQI_CACHE_PATH . 'plugins/' );
 define( 'WPQI_CACHE_TRANSLATIONS_PATH'	, WPQI_CACHE_PATH . 'translations/' );
 
 require( 'inc/functions.php');
@@ -114,12 +114,12 @@ if ( isset( $_GET['action'] ) ) {
 			// 取得 WordPress 核心程式資料
 			$wp = json_decode( file_get_contents( WP_API_CORE . $language ) )->offers[0];
 
-			// 下載最新版本的 WordPress 核心程式安裝套件
+			// 下載 WordPress 核心程式的最新版本安裝套件
 			if ( ! file_exists( WPQI_CACHE_CORE_PATH . 'wordpress-' . $wp->version . '-' . $language  . '.zip') ) {
 				file_put_contents( WPQI_CACHE_CORE_PATH . 'wordpress-' . $wp->version . '-' . $language  . '.zip', file_get_contents( $wp->download ) );
 			}
 
-			// 下載最新版本的 WordPress 核心本地化語言套件
+			// 下載 WordPress 核心程式的最新版本本地化語言套件
 			$translation_url = "https://api.wordpress.org/translations/core/1.0/?version=" . $wp->version;
 			$translation_path = WPQI_CACHE_TRANSLATIONS_PATH . 'core-wordpress-' . $wp->version . '-' . $language  . '.zip';
 			download_translation($language, $translation_url, $translation_path);
@@ -516,7 +516,7 @@ if ( isset( $_GET['action'] ) ) {
 							$theme_path = WPQI_CACHE_THEMES_PATH . $theme->slug . '-' . $theme->version . '.zip';
 
 							if ( ! file_exists( $theme_path ) ) {
-								// We download the lastest version
+								// 下載佈景主題的最新版本安裝套件
 								if ( $download_link = file_get_contents( $theme->download_link ) ) {
  									file_put_contents( $theme_path, $download_link );
  								}
@@ -534,7 +534,7 @@ if ( isset( $_GET['action'] ) ) {
 								}
 							}
 
-							// 下載最新版本的佈景主題本地化語言套件
+							// 下載佈景主題的最新版本本地化語言套件
 							$translation_url = "https://api.wordpress.org/translations/themes/1.0/?slug=" . $theme->slug . "&version=" . $theme->version;
 							$translation_path = WPQI_CACHE_TRANSLATIONS_PATH . 'theme-' . $theme->slug . '-' . $theme->version . '-' . $language  . '.zip';
 							download_translation($language, $translation_url, $translation_path);
@@ -600,7 +600,7 @@ if ( isset( $_GET['action'] ) ) {
 							$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
 
 							if ( ! file_exists( $plugin_path ) ) {
-								// 下載最新版本外掛
+								// 下載外掛的最新版本安裝套件
 								if ( $download_link = file_get_contents( $plugin->download_link ) ) {
  									file_put_contents( $plugin_path, $download_link );
  								}
@@ -613,7 +613,7 @@ if ( isset( $_GET['action'] ) ) {
 								$zip->close();
 							}
 
-							// 下載最新版本的外掛本地化語言套件
+							// 下載外掛的最新版本本地化語言套件
 							$translation_url = "https://api.wordpress.org/translations/plugins/1.0/?slug=" . $plugin->slug . "&version=" . $plugin->version;
 							$translation_path = WPQI_CACHE_TRANSLATIONS_PATH . 'plugin-' . $plugin->slug . '-' . $plugin->version . '-' . $language  . '.zip';
 							download_translation($language, $translation_url, $translation_path);

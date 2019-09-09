@@ -7,23 +7,26 @@ WP Quick Install 提供了安裝 WordPress 網站最簡單的方式。
 
 僅需下載 ZIP 壓縮檔並將解壓縮所得的資料夾及全部檔案上傳至網站根目錄，並在網址列輸入 siteurl/wp-quick-install/index.php 即可開始安裝。
 
-Changelog
+變更記錄
 ================
 
 1.5.2
 -----------
-* Download the last translations file
+* 支援下載與 [網站介面語言] 設定一致的外掛及佈景主題本地化語言套件 (如果提供的話)
+* Contributor: [Richer Yang](https://github.com/RicherYang/WP-Quick-Install) 
 
 1.5.1
 -----------
-* Support install theme from WordPress.org
-* Fix same php error
+* 支援安裝 WordPress.org 佈景主題目錄中的免費佈景主題
+* 修正某些 PHP 錯誤
+* Contributor: [Richer Yang](https://github.com/RicherYang/WP-Quick-Install)
 
 1.5.0
 -----------
-* Fix Apache 2.4 issue
-* Fix php notice issue
-* Change database content function like WordPress used
+* 修正使用 Apache 2.4 時的錯誤
+* 修正 PHP 通知問題
+* 將資料庫連線方式變更為 WordPress 核心程式使用的方式
+* Contributor: [Richer Yang](https://github.com/RicherYang/WP-Quick-Install) 
 
 1.4.2
 -----------
