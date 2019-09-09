@@ -748,34 +748,32 @@ else { ?>
 				<table class="form-table">
 					<tr>
 						<th scope="row"><label for="dbname"><?php echo _('資料庫名稱');?></label></th>
-						<td><input name="dbname" id="dbname" type="text" size="25" value="wordpress" class="required" /></td>
+						<td><input name="dbname" id="dbname" type="text" size="18" value="wordpress" class="required" /></td>
 						<td><?php echo _('用於建置網站的資料庫名稱。'); ?></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="uname"><?php echo _('資料庫使用者名稱');?></label></th>
-						<td><input name="uname" id="uname" type="text" size="25" value="username" class="required" /></td>
+						<td><input name="uname" id="uname" type="text" size="18" value="username" class="required" /></td>
 						<td><?php echo _('用於建置網站的 MySQL 資料庫使用者名稱'); ?></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="pwd"><?php echo _('資料庫密碼');?></label></th>
-						<td><input name="pwd" id="pwd" type="text" size="25" value="password" /></td>
+						<td><input name="pwd" id="pwd" type="text" size="18" value="password" /></td>
 						<td><?php echo _('...以及 MySQL 資料庫密碼。');?></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="dbhost"><?php echo _('資料庫主機名稱'); ?></label></th>
-						<td><input name="dbhost" id="dbhost" type="text" size="25" value="localhost" class="required" /></td>
+						<td><input name="dbhost" id="dbhost" type="text" size="18" value="localhost" class="required" /></td>
 						<td><?php echo _('如果因故無法使用 <code>localhost</code> 進行連線，請要求網站主機服務商提供正確對應資訊。'); ?></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="prefix"><?php echo _('資料表前置詞'); ?></label></th>
-						<td><input name="prefix" id="prefix" type="text" value="wp_" size="25" class="required" /></td>
+						<td><input name="prefix" id="prefix" type="text" value="wp_" size="18" class="required" /></td>
 						<td><?php echo _('如需在同一個資料庫中安裝多個 WordPress，請修改這個欄位中的預設設定。'); ?></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="default_content"><?php echo _('網站預設內容');?></label></th>
-						<td>
-							<label><input type="checkbox" name="default_content" id="default_content" value="1" checked="checked" /> <?php echo _('刪除網站預設內容')?></label>
-						</td>
+						<td><label><input type="checkbox" name="default_content" id="default_content" value="1" checked="checked" /> <?php echo _('刪除網站預設內容')?></label></td>
 						<td><?php echo _('啟用這項設定後，便會在 WordPress 網站建置完成後刪除如文章、頁面、留言及連結等預設內容。');?></td>
 					</tr>
 				</table>
@@ -806,9 +804,7 @@ else { ?>
 							<label for="directory"><?php echo _('安裝資料夾');?></label>
 							<p><?php echo _('欄位留空便會安裝於網站根目錄');?></p>
 						</th>
-						<td>
-							<input name="directory" type="text" id="directory" size="25" value="" />
-						</td>
+						<td><input name="directory" type="text" id="directory" size="25" value="" /></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="weblog_title"><?php echo _('網站標題');?></label></th>
@@ -833,12 +829,14 @@ else { ?>
 					</tr>
 					<tr>
 						<th scope="row"><label for="admin_email"><?php echo _('電子郵件地址');?></label></th>
-						<td><input name="admin_email" type="text" id="admin_email" size="25" value="" class="required" />
-						<p><?php echo _('繼續操作前，請再次確認填寫的電子郵件地址。');?></p></td>
+						<td>
+							<input name="admin_email" type="text" id="admin_email" size="25" value="" class="required" />
+							<p><?php echo _('繼續操作前，請再次確認填寫的電子郵件地址。');?></p>
+						</td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="blog_public"><?php echo _('搜尋引擎可見度');?></label></th>
-						<td colspan="2"><label><input type="checkbox" id="blog_public" name="blog_public" value="1" checked="checked" /> <?php echo _('開放搜尋引擎索引這個網站');?></label></td>
+						<td><label><input type="checkbox" id="blog_public" name="blog_public" value="1" checked="checked" /> <?php echo _('開放搜尋引擎索引這個網站');?></label></td>
 					</tr>
 				</table>
 
@@ -851,7 +849,7 @@ else { ?>
 					<tr>
 						<th scope="row">
 							<label for="themes"><?php echo _('免費佈景主題');?></label>
-							<p><?php echo _('請輸入 WordPress.org 佈景主題目錄中正確的佈景主題代稱，例如 https://wordpress.org/themes/<strong>twentynineteen</strong>');?></p>
+							<p><?php echo _('請輸入 WordPress.org 佈景主題目錄中正確的佈景主題代稱，例如<br>https://tw.wordpress.org/themes/<strong>twentynineteen</strong>');?></p>
 						</th>
 						<td>
 							<input name="themes" type="text" id="themes" size="50" value="" />
@@ -859,19 +857,15 @@ else { ?>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="activate_theme"><?php echo _('自動啟用');?></label>
-						</th>
-						<td colspan="2">
+						<th scope="row"><label for="activate_theme"><?php echo _('自動啟用');?></label></th>
+						<td>
 							<label><input type="checkbox" id="activate_theme" name="activate_theme" value="1" /> <?php echo _('WordPress 安裝完畢後，啟用預先安裝的佈景主題');?></label>
 							<p><?php echo _('如果 theme.zip 存在，便會啟用這個檔案代表的佈景主題，不然便會啟用從佈景主題目錄第一個下載安裝的免費佈景主題。');?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="delete_default_themes"><?php echo _('預設佈景主題');?></label>
-						</th>
-						<td colspan="2"><label><input type="checkbox" id="delete_default_themes" name="delete_default_themes" value="1" /> <?php echo _('刪除預設 Twenty 系列佈景主題');?></label></td>
+						<th scope="row"><label for="delete_default_themes"><?php echo _('預設佈景主題');?></label></th>
+						<td><label><input type="checkbox" id="delete_default_themes" name="delete_default_themes" value="1" /> <?php echo _('刪除預設 Twenty 系列佈景主題');?></label></td>
 					</tr>
 				</table>
 
@@ -881,7 +875,7 @@ else { ?>
 					<tr>
 						<th scope="row">
 							<label for="plugins"><?php echo _('免費外掛');?></label>
-							<p><?php echo _('請輸入 WordPress.org 外掛目錄中正確的外掛代稱，例如 https://tw.wordpress.org/plugins/<strong>health-check</strong>');?></p>
+							<p><?php echo _('請輸入 WordPress.org 外掛目錄中正確的外掛代稱，例如<br>https://tw.wordpress.org/plugins/<strong>health-check</strong>');?></p>
 						</th>
 						<td>
 							<input name="plugins" type="text" id="plugins" size="50" value="health-check;" />
@@ -896,31 +890,22 @@ else { ?>
 						<td><label><input type="checkbox" id="plugins_premium" name="plugins_premium" value="1" /> <?php echo _('WordPress 安裝完畢後自動安裝付費外掛');?></label></td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="plugins"><?php echo _('自動啟用');?></label>
-						</th>
+						<th scope="row"><label for="plugins"><?php echo _('自動啟用');?></label></th>
 						<td><label><input type="checkbox" name="activate_plugins" id="activate_plugins" value="1" /> <?php echo _('WordPress 安裝完畢後自動啟用外掛');?></label></td>
 					</tr>
 				</table>
 
 				<h1><?php echo _('永久連結設定');?></h1>
-
 				<p><?php echo sprintf( _('WordPress 預設使用問號連接著一串數字的網址 (例如 ?p=123)，但是 WordPress 提供網站管理員為永久連結及彙整建立自訂網址結構的設定。自訂網址結構能為網站連結增進可讀性、可用性及向前相容性 (與更新版本具備相容性)。〈<a href="%s" target=_blank>使用永久連結</a>〉線上說明中提供了可用於永久連結結構的標籤說明。'), 'https://wordpress.org/support/article/using-permalinks/'); ?></p>
 
 				<table class="form-table">
 					<tr>
-						<th scope="row">
-							<label for="permalink_structure"><?php echo _('自訂結構');?></label>
-						</th>
-						<td>
-							<code>https://<?php echo $_SERVER['SERVER_NAME']; ?></code>
-							<input name="permalink_structure" type="text" id="permalink_structure" size="50" value="/%postname%/" />
-						</td>
+						<th scope="row"><label for="permalink_structure"><?php echo _('自訂結構');?></label></th>
+						<td><code>https://<?php echo $_SERVER['SERVER_NAME']; ?></code><input name="permalink_structure" type="text" id="permalink_structure" size="25" value="/%postname%/" /></td>
 					</tr>
 				</table>
 
 				<h1><?php echo _('媒體設定');?></h1>
-
 				<p><?php echo _('下方所列出的尺寸，決定了將圖片新增至 [媒體庫] 後會產生的各式圖片最大尺寸 (單位為像素)。');?></p>
 
 				<table class="form-table">
@@ -928,9 +913,9 @@ else { ?>
 						<th scope="row"><?php echo _('縮圖尺寸');?></th>
 						<td>
 							<label for="thumbnail_size_w"><?php echo _('寬度: ');?></label>
-							<input name="thumbnail_size_w" style="width:100px;" type="number" id="thumbnail_size_w" min="0" step="10" value="0" size="1" />
+							<input name="thumbnail_size_w" type="number" id="thumbnail_size_w" min="0" step="10" value="0" size="6" />
 							<label for="thumbnail_size_h"><?php echo _('高度: ');?></label>
-							<input name="thumbnail_size_h" style="width:100px;" type="number" id="thumbnail_size_h" min="0" step="10" value="0" size="1" /><br>
+							<input name="thumbnail_size_h" type="number" id="thumbnail_size_h" min="0" step="10" value="0" size="5" /><br>
 							<label for="thumbnail_crop" class="small-text"><input name="thumbnail_crop" type="checkbox" id="thumbnail_crop" value="1" checked="checked" /><?php echo _('將縮圖裁剪至與上方設定完全相符的尺寸');?></label>
 						</td>
 					</tr>
@@ -938,18 +923,18 @@ else { ?>
 						<th scope="row"><?php echo _('中型尺寸');?></th>
 						<td>
 							<label for="medium_size_w"><?php echo _('寬度:');?></label>
-							<input name="medium_size_w" style="width:100px;" type="number" id="medium_size_w" min="0" step="10" value="0" size="5" />
+							<input name="medium_size_w" type="number" id="medium_size_w" min="0" step="10" value="0" size="6" />
 							<label for="medium_size_h"><?php echo _('高度: ');?></label>
-							<input name="medium_size_h" style="width:100px;" type="number" id="medium_size_h" min="0" step="10" value="0" size="5" /><br>
+							<input name="medium_size_h" type="number" id="medium_size_h" min="0" step="10" value="0" size="6" />
 						</td>
 					</tr>
 					<tr>
 						<th scope="row"><?php echo _('大型尺寸');?></th>
 						<td>
 							<label for="large_size_w"><?php echo _('寬度: ');?></label>
-							<input name="large_size_w" style="width:100px;" type="number" id="large_size_w" min="0" step="10" value="0" size="5" />
+							<input name="large_size_w" type="number" id="large_size_w" min="0" step="10" value="0" size="6" />
 							<label for="large_size_h"><?php echo _('高度: ');?></label>
-							<input name="large_size_h" style="width:100px;" type="number" id="large_size_h" min="0" step="10" value="0" size="5" /><br>
+							<input name="large_size_h" type="number" id="large_size_h" min="0" step="10" value="0" size="6" />
 						</td>
 					</tr>
 					<tr>
@@ -958,7 +943,7 @@ else { ?>
 							<p><?php echo _('媒體檔案預設會儲存於 <strong>wp-content/uploads</strong> 資料夾');?></p>
 						</th>
 						<td>
-							<input type="text" id="upload_dir" name="upload_dir" size="46" value="" /><br/>
+							<input type="text" id="upload_dir" name="upload_dir" size="25" value="" /><br>
 							<label for="uploads_use_yearmonth_folders" class="small-text"><input name="uploads_use_yearmonth_folders" type="checkbox" id="uploads_use_yearmonth_folders" value="1" checked="checked" /><?php echo _('為上傳的檔案建立以<strong>年份</strong>及<strong>月份</strong>命名的資料夾')?></label>
 						</td>
 					</tr>
@@ -973,14 +958,10 @@ else { ?>
 							<label for="post_revisions"><?php echo _('內容修訂版本數量');?></label>
 							<p><?php echo _('依照預設，內容修訂版本數量沒有上限');?></p>
 						</th>
-						<td>
-							<input name="post_revisions" id="post_revisions" type="number" min="0" value="0" />
-						</td>
+						<td><input name="post_revisions" id="post_revisions" type="number" min="0" value="0" size="6" /></td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="plugins"><?php echo _('編輯器');?></label>
-						</th>
+						<th scope="row"><label for="plugins"><?php echo _('編輯器');?></label></th>
 						<td><label><input type="checkbox" id="disallow_file_edit" name="disallow_file_edit" value="1" checked='checked' /><?php echo _('停用佈景主題及外掛編輯器');?></label></td>
 					</tr>
 					<tr>
@@ -988,27 +969,21 @@ else { ?>
 							<label for="autosave_interval"><?php echo _('自動儲存間隔時間');?></label>
 							<p><?php echo _('依照預設，自動儲存的間隔時間為 60 秒');?></p>
 						</th>
-						<td><input name="autosave_interval" id="autosave_interval" type="number" min="60" step="60" size="25" value="7200" /> <?php echo _('秒');?></td>
+						<td><input name="autosave_interval" id="autosave_interval" type="number" min="60" step="60" size="6" value="7200" /> <?php echo _('秒');?></td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="debug"><?php echo _('偵錯模式');?></label>
-						</th>
+						<th scope="row"><label for="debug"><?php echo _('偵錯模式');?></label></th>
 						<td>
-							<label><input type="checkbox" name="debug" id="debug" value="1" /> <?php echo _('啟用 WordPress 偵錯模式</label><p>啟用這項設定後，WordPress 便會顯示執行錯誤訊息。</p>');?>
-
-
+							<label><input type="checkbox" name="debug" id="debug" value="1" /> <?php echo _('啟用 WordPress 偵錯模式'); ?></label>
+							<p><?php echo _('啟用這項設定後，WordPress 便會顯示執行錯誤訊息。'); ?></p>
 							<div id="debug_options" style="display:none;">
-								<label><input type="checkbox" name="debug_display" id="debug_display" value="1" /> <?php echo _('啟用 WP Debug');?></label>
-								<br/>
+								<label><input type="checkbox" name="debug_display" id="debug_display" value="1" /> <?php echo _('啟用 WP Debug');?></label><br>
 								<label><input type="checkbox" name="debug_log" id="debug_log" value="1" /> <?php echo _('將錯誤訊息寫入記錄檔案 <strong>(wp-content/debug.log)</strong> 中');?></label>
 							</div>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row">
-							<label for="wpcom_api_key"><?php echo _('WordPress.com API 金鑰');?></label>
-						</th>
+						<th scope="row"><label for="wpcom_api_key"><?php echo _('WordPress.com API 金鑰');?></label></th>
 						<td><input name="wpcom_api_key" id="wpcom_api_key" type="text" size="25" value="" /></td>
 					</tr>
 				</table>
