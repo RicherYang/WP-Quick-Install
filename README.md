@@ -1,4 +1,4 @@
-WP Quick Install 1.5.2 台灣繁體中文版
+WP Quick Install 1.5.3 台灣繁體中文版
 ================
 
 WP Quick Install 提供了安裝 WordPress 網站最簡單的方式。
