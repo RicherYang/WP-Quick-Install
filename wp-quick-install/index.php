@@ -12,12 +12,12 @@ Last Update: 2019-07-11
 
 @set_time_limit( 0 );
 
-define( 'WP_API_CORE'				, 'https://api.wordpress.org/core/version-check/1.7/?locale=' );
-define( 'WPQI_CACHE_PATH'			, 'cache/' );
-define( 'WPQI_CACHE_CORE_PATH'		, WPQI_CACHE_PATH . 'core/' );
-define( 'WPQI_CACHE_THEMES_PATH'	, WPQI_CACHE_PATH . 'themes/' );
-define( 'WPQI_CACHE_PLUGINS_PATH'	, WPQI_CACHE_PATH . 'plugins/' );
-define( 'WPQI_CACHE_TRANSLATIONS_PATH'	, WPQI_CACHE_PATH . 'translations/' );
+define( 'WP_API_CORE'                  , 'https://api.wordpress.org/core/version-check/1.7/?locale=' );
+define( 'WPQI_CACHE_PATH'              , 'cache/' );
+define( 'WPQI_CACHE_CORE_PATH'         , WPQI_CACHE_PATH . 'core/' );
+define( 'WPQI_CACHE_THEMES_PATH'       , WPQI_CACHE_PATH . 'themes/' );
+define( 'WPQI_CACHE_PLUGINS_PATH'      , WPQI_CACHE_PATH . 'plugins/' );
+define( 'WPQI_CACHE_TRANSLATIONS_PATH' , WPQI_CACHE_PATH . 'translations/' );
 
 require( 'inc/functions.php');
 
@@ -580,53 +580,56 @@ if ( isset( $_GET['action'] ) ) {
 				/*	擷取外掛資料夾
 				/*--------------------------*/
 
+				// 取得 WordPress 網站介面語言資料
+				$language = substr( $_POST['language'], 0, 6 );
+
 				if ( ! empty( $_POST['plugins'] ) ) {
-
-					// 取得 WordPress 網站介面語言資料
-					$language = substr( $_POST['language'], 0, 6 );
-
 					$plugins     = explode( ";", $_POST['plugins'] );
 					$plugins     = array_map( 'trim' , $plugins );
-					$plugins_dir = $directory . 'wp-content/plugins/';
-					$translations_dir = $directory . 'wp-content/languages/plugins/';
+				}
 
-					foreach ( $plugins as $plugin ) {
+				// 加入 WordPress 內建的外掛以確保使用最新版本
+				$plugins[] = 'akismet';
 
-						// 擷取外掛 XML 檔案，便能取得清單以便下載
-					    $plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/$plugin.json" );
+				$plugins_dir = $directory . 'wp-content/plugins/';
+				$translations_dir = $directory . 'wp-content/languages/plugins/';
 
-					    if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
+				foreach ( $plugins as $plugin ) {
 
-							$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
+					// 擷取外掛 XML 檔案，便能取得清單以便下載
+					$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/$plugin.json" );
 
-							if ( ! file_exists( $plugin_path ) ) {
-								// 下載外掛的最新版本安裝套件
-								if ( $download_link = file_get_contents( $plugin->download_link ) ) {
- 									file_put_contents( $plugin_path, $download_link );
- 								}
+					if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
+
+						$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
+
+						if ( ! file_exists( $plugin_path ) ) {
+							// 下載外掛的最新版本安裝套件
+							if ( $download_link = file_get_contents( $plugin->download_link ) ) {
+								file_put_contents( $plugin_path, $download_link );
 							}
+						}
 
-					    	// 解壓縮外掛安裝套件
-					    	$zip = new ZipArchive;
-							if ( $zip->open( $plugin_path ) === true ) {
-								$zip->extractTo( $plugins_dir );
+						// 解壓縮外掛安裝套件
+						$zip = new ZipArchive;
+						if ( $zip->open( $plugin_path ) === true ) {
+							$zip->extractTo( $plugins_dir );
+							$zip->close();
+						}
+
+						// 下載外掛的最新版本本地化語言套件
+						$translation_url = "https://api.wordpress.org/translations/plugins/1.0/?slug=" . $plugin->slug . "&version=" . $plugin->version;
+						$translation_path = WPQI_CACHE_TRANSLATIONS_PATH . 'plugin-' . $plugin->slug . '-' . $plugin->version . '-' . $language  . '.zip';
+						download_translation($language, $translation_url, $translation_path);
+
+						if( file_exists( $translation_path ) ) {
+							// 解壓縮本地化語言套件
+							$zip = new ZipArchive;
+							if ( $zip->open( $translation_path ) === true ) {
+								$zip->extractTo( $translations_dir );
 								$zip->close();
 							}
-
-							// 下載外掛的最新版本本地化語言套件
-							$translation_url = "https://api.wordpress.org/translations/plugins/1.0/?slug=" . $plugin->slug . "&version=" . $plugin->version;
-							$translation_path = WPQI_CACHE_TRANSLATIONS_PATH . 'plugin-' . $plugin->slug . '-' . $plugin->version . '-' . $language  . '.zip';
-							download_translation($language, $translation_url, $translation_path);
-
-							if( file_exists( $translation_path ) ) {
-								// 解壓縮本地化語言套件
-								$zip = new ZipArchive;
-								if ( $zip->open( $translation_path ) === true ) {
-									$zip->extractTo( $translations_dir );
-									$zip->close();
-								}
-							}
-					    }
+						}
 					}
 				}
 
