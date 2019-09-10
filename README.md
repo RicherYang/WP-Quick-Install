@@ -10,6 +10,12 @@ WP Quick Install 提供了安裝 WordPress 網站最簡單的方式。
 變更記錄
 ================
 
+1.5.3
+-----------
+* 支援內建的 akismet 外掛及本地化語言套件更新至最新版
+* 支援匯入 [Theme Unit Test](https://github.com/WPTRT/theme-unit-test) 提供的網站內容範例
+* Contributor: [Richer Yang](https://github.com/RicherYang/WP-Quick-Install) 
+
 1.5.2
 -----------
 * 支援下載與 [網站介面語言] 設定一致的外掛及佈景主題本地化語言套件 (如果提供的話)
