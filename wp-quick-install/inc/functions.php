@@ -87,3 +87,22 @@ function download_translation($language, $translation_url, $translation_path) {
 		}
 	}
 }
+
+function get_wordpress_importer() {
+	$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/wordpress-importer.json" );
+	if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
+		$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
+		if ( ! file_exists( $plugin_path ) ) {
+			if ( $download_link = file_get_contents( $plugin->download_link ) ) {
+				file_put_contents( $plugin_path, $download_link );
+
+				// 解壓縮外掛安裝套件
+				$zip = new ZipArchive;
+				if ( $zip->open( $plugin_path ) === true ) {
+					$zip->extractTo( WPQI_CACHE_PATH );
+					$zip->close();
+				}
+			}
+		}
+	}
+}

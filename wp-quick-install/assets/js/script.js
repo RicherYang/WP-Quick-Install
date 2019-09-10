@@ -96,16 +96,25 @@ $(document).ready(function() {
 	/*--------------------------*/
 	/*	網站內容
 	/*--------------------------*/
-	if ( typeof data.content.delete_default !='undefined' ) {
-		( parseInt(data.content.delete_default) == 1 ) ? $('#delete_default_content').attr('checked', 'checked') : $('#delete_default_content').removeAttr('checked');
-	}
 
-	if ( typeof data.content.theme_preview !='undefined' ) {
-		( parseInt(data.content.theme_preview) == 1 ) ? $('#theme_preview_content').attr('checked', 'checked') : $('#theme_preview_content').removeAttr('checked');
-	}
+	if ( typeof data.content !='undefined' ) {
 
-	if ( typeof data.content.theme_test !='undefined' ) {
-		( parseInt(data.content.theme_test) == 1 ) ? $('#theme_test_content').attr('checked', 'checked') : $('#theme_test_content').removeAttr('checked');
+		if ( typeof data.content.delete_default !='undefined' ) {
+			( parseInt(data.content.delete_default) == 1 ) ? $('#delete_default_content').attr('checked', 'checked') : $('#delete_default_content').removeAttr('checked');
+		}
+
+		if ( typeof data.content.theme_preview !='undefined' ) {
+			( parseInt(data.content.theme_preview) == 1 ) ? $('#theme_preview_content').attr('checked', 'checked') : $('#theme_preview_content').removeAttr('checked');
+		}
+
+		if ( typeof data.content.theme_test !='undefined' ) {
+			( parseInt(data.content.theme_test) == 1 ) ? $('#theme_test_content').attr('checked', 'checked') : $('#theme_test_content').removeAttr('checked');
+		}
+		
+		if ( typeof data.content.backup !='undefined' ) {
+			( parseInt(data.content.backup) == 1 ) ? $('#backup_content').attr('checked', 'checked') : $('#backup_content').removeAttr('checked');
+		}
+
 	}
 
 	/*--------------------------*/

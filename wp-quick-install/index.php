@@ -13,7 +13,8 @@ Last Update: 2019-09/10
 @set_time_limit( 0 );
 
 define( 'WP_API_CORE'                  , 'https://api.wordpress.org/core/version-check/1.7/?locale=' );
-define( 'WPQI_CACHE_PATH'              , 'cache/' );
+define( 'WPQI_PATH'                    , __DIR__ . '/' );
+define( 'WPQI_CACHE_PATH'              , WPQI_PATH . 'cache/' );
 define( 'WPQI_CACHE_CORE_PATH'         , WPQI_CACHE_PATH . 'core/' );
 define( 'WPQI_CACHE_THEMES_PATH'       , WPQI_CACHE_PATH . 'themes/' );
 define( 'WPQI_CACHE_PLUGINS_PATH'      , WPQI_CACHE_PATH . 'plugins/' );
@@ -47,8 +48,8 @@ if ( ! is_dir( WPQI_CACHE_TRANSLATIONS_PATH ) ) {
 
 // 驗證是否有預設配置檔
 $data = array();
-if ( file_exists( 'data.ini') ) {
-	$data = json_encode( parse_ini_file( 'data.ini') );
+if ( file_exists( WPQI_PATH . 'data.ini') ) {
+	$data = json_encode( parse_ini_file( WPQI_PATH . 'data.ini') );
 }
 
 // 將 ../ 語法加入目錄
@@ -155,11 +156,11 @@ if ( isset( $_GET['action'] ) ) {
 			if ( $zip->open( WPQI_CACHE_CORE_PATH . 'wordpress-' . $wp->version . '-' . $language  . '.zip') === true ) {
 
 				// 進行解壓縮
-				$zip->extractTo( '.');
+				$zip->extractTo( WPQI_PATH);
 				$zip->close();
 
 				// 掃描資料夾
-				$files = scandir( 'wordpress');
+				$files = scandir( WPQI_PATH . 'wordpress');
 
 				// 從目前資料夾其其上層資料夾中移除 "." 及 ".."
 				$files = array_diff( $files, array( '.', '..') );
@@ -398,22 +399,7 @@ if ( isset( $_GET['action'] ) ) {
 					file_put_contents( WPQI_CACHE_PATH . 'theme-preview.xml', file_get_contents( 'https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/theme-preview.xml' ) );
 
 					// 下載 WordPress 內容匯入程式的最新版本
-					$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/wordpress-importer.json" );
-					if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
-						$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
-						if ( ! file_exists( $plugin_path ) ) {
-							if ( $download_link = file_get_contents( $plugin->download_link ) ) {
-								file_put_contents( $plugin_path, $download_link );
-							}
-						}
-
-						// 解壓縮外掛安裝套件
-						$zip = new ZipArchive;
-						if ( $zip->open( $plugin_path ) === true ) {
-							$zip->extractTo( WPQI_CACHE_PATH );
-							$zip->close();
-						}
-					}
+					get_wordpress_importer();
 
 					if( is_dir( WPQI_CACHE_PATH . 'wordpress-importer' ) ) {
 						if( !defined( 'WP_LOAD_IMPORTERS' ) ) {
@@ -422,12 +408,14 @@ if ( isset( $_GET['action'] ) ) {
 						}
 
 						$WP_Import = new WP_Import();
-						$WP_Import->fetch_attachments = true;
 						$import_data = $WP_Import->parse( WPQI_CACHE_PATH . 'theme-preview.xml' );
-						foreach( $import_data['authors'] as $author_info ) {
-							$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+						if( !is_wp_error( $import_data ) ) {
+							foreach( $import_data['authors'] as $author_info ) {
+								$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+							}
+							$WP_Import->fetch_attachments = true;
+							$WP_Import->import( WPQI_CACHE_PATH . 'theme-preview.xml' );
 						}
-						$WP_Import->import( WPQI_CACHE_PATH . 'theme-preview.xml' );
 					}
 				}
 
@@ -440,22 +428,7 @@ if ( isset( $_GET['action'] ) ) {
 					file_put_contents( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml', file_get_contents( 'https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/themeunittestdata.wordpress.xml' ) );
 
 					// 下載 WordPress 內容匯入程式的最新版本
-					$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/wordpress-importer.json" );
-					if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
-						$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
-						if ( ! file_exists( $plugin_path ) ) {
-							if ( $download_link = file_get_contents( $plugin->download_link ) ) {
-								file_put_contents( $plugin_path, $download_link );
-							}
-						}
-
-						// 解壓縮外掛安裝套件
-						$zip = new ZipArchive;
-						if ( $zip->open( $plugin_path ) === true ) {
-							$zip->extractTo( WPQI_CACHE_PATH );
-							$zip->close();
-						}
-					}
+					get_wordpress_importer();
 
 					if( is_dir( WPQI_CACHE_PATH . 'wordpress-importer' ) ) {
 						if( !defined( 'WP_LOAD_IMPORTERS' ) ) {
@@ -465,12 +438,43 @@ if ( isset( $_GET['action'] ) ) {
 
 						if ( class_exists( 'WP_Import' ) ) {
 							$WP_Import = new WP_Import();
-							$WP_Import->fetch_attachments = true;
 							$import_data = $WP_Import->parse( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml' );
-							foreach( $import_data['authors'] as $author_info ) {
-								$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+							if( !is_wp_error( $import_data ) ) {
+								foreach( $import_data['authors'] as $author_info ) {
+									$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+								}
+								$WP_Import->fetch_attachments = true;
+								$WP_Import->import( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml' );
 							}
-							$WP_Import->import( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml' );
+						}
+					}
+				}
+
+				/*--------------------------*/
+				/*	匯入自有備份內容
+				/*--------------------------*/
+
+				if ( isset($_POST['backup_content']) && (int) $_POST['backup_content'] == 1 ) {
+
+					// 下載 WordPress 內容匯入程式的最新版本
+					get_wordpress_importer();
+
+					if( is_dir( WPQI_CACHE_PATH . 'wordpress-importer' ) ) {
+						if( !defined( 'WP_LOAD_IMPORTERS' ) ) {
+							define( 'WP_LOAD_IMPORTERS', true );
+							require_once( WPQI_CACHE_PATH . 'wordpress-importer/wordpress-importer.php');
+						}
+
+						if ( class_exists( 'WP_Import' ) ) {
+							$WP_Import = new WP_Import();
+							$import_data = $WP_Import->parse( __DIR__ . '/wordpress.xml' );
+							if( !is_wp_error( $import_data ) ) {
+								foreach( $import_data['authors'] as $author_info ) {
+									$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+								}
+								$WP_Import->fetch_attachments = true;
+								$WP_Import->import( __DIR__ . '/wordpress.xml' );
+							}
 						}
 					}
 				}
@@ -480,10 +484,10 @@ if ( isset( $_GET['action'] ) ) {
 				/*--------------------------*/
 
 				// 檢查 data.ini 是否存在
-				if ( file_exists( 'data.ini') ) {
+				if ( file_exists( WPQI_PATH . 'data.ini') ) {
 
 					// 剖析檔案內容及取得陣列
-					$file = parse_ini_file( 'data.ini');
+					$file = parse_ini_file( WPQI_PATH . 'data.ini');
 
 					// 驗證是否至少有一個頁面
 					if ( isset($file['posts']) && count( $file['posts'] ) >= 1 ) {
@@ -575,12 +579,12 @@ if ( isset( $_GET['action'] ) ) {
 				$activate_theme = '';
 
 				// 驗證 theme.zip 是否存在
-				if ( file_exists( 'theme.zip' ) ) {
+				if ( file_exists( WPQI_PATH . 'theme.zip' ) ) {
 
 					$zip = new ZipArchive;
 
 					// 驗證 theme.zip 檔案是否可用
-					if ( $zip->open( 'theme.zip') === true ) {
+					if ( $zip->open( WPQI_PATH . 'theme.zip') === true ) {
 
 						// 擷取資料夾名稱
 						$stat = $zip->statIndex( 0 );
@@ -684,8 +688,9 @@ if ( isset( $_GET['action'] ) ) {
 				$language = substr( $_POST['language'], 0, 6 );
 
 				if ( ! empty( $_POST['plugins'] ) ) {
-					$plugins     = explode( ";", $_POST['plugins'] );
-					$plugins     = array_map( 'trim' , $plugins );
+					$plugins = explode( ";", $_POST['plugins'] );
+					$plugins = array_map( 'trim' , $plugins );
+					$plugins = array_filter($plugins);
 				}
 
 				// 加入 WordPress 內建的外掛以確保使用最新版本
@@ -736,7 +741,7 @@ if ( isset( $_GET['action'] ) ) {
 				if ( isset($_POST['plugins_premium']) && (int) $_POST['plugins_premium'] == 1 ) {
 
 					// 掃描資料夾
-					$plugins = scandir( 'plugins');
+					$plugins = scandir( WPQI_PATH . 'plugins');
 
 					// 移除目前資料夾及其上層資料夾對應的 "." 及 ".."
 					$plugins = array_diff( $plugins, array( '.', '..') );
@@ -952,6 +957,13 @@ else { ?>
 					<tr>
 						<th scope="row"><?php echo _('匯入佈景主題測試內容');?></th>
 						<td><label><input type="checkbox" name="theme_test_content" id="theme_test_content" value="1" /><?php echo _('啟用這項設定，在 WordPress 網站建置完成後將匯入 https://github.com/WPTRT/theme-unit-test 提供的佈景主題開發測試內容。');?></label></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php echo _('匯入自有備份內容');?></th>
+						<td>
+							<label><input type="checkbox" name="backup_content" id="backup_content" value="1" /><?php echo _('啟用這項設定，在 WordPress 網站建置完成後將匯入儲存於 wp-quick-install 資料夾中的 wordpress.xml 檔案。');?></label>
+							<p><?php echo _('只支援 WXR 格式的內容匯入。如無法正確解析欲匯入的內容，將自動忽略。');?></p>
+						</td>
 					</tr>
 				</table>
 
