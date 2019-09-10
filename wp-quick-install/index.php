@@ -338,15 +338,6 @@ if ( isset( $_GET['action'] ) ) {
 				update_option( 'home', $url );
 
 				/*--------------------------*/
-				/*	移除預設內容
-				/*--------------------------*/
-
-				if ( $_POST['default_content'] == '1') {
-					wp_delete_post( 1, true ); // We remove the article "Hello World"
-					wp_delete_post( 2, true ); // We remove the "Exemple page"
-				}
-
-				/*--------------------------*/
 				/*	更新 [永久連結] 設定
 				/*--------------------------*/
 				if ( ! empty( $_POST['permalink_structure'] ) ) {
@@ -373,7 +364,116 @@ if ( isset( $_GET['action'] ) ) {
 					update_option( 'large_size_h', (int) $_POST['large_size_h'] );
 				}
 
-				 update_option( 'uploads_use_yearmonth_folders', (int) $_POST['uploads_use_yearmonth_folders'] );
+				update_option( 'uploads_use_yearmonth_folders', (int) $_POST['uploads_use_yearmonth_folders'] );
+
+				break;
+
+			case "load_content" :
+
+				/** 載入 WordPress Bootstrap */
+				require_once( $directory . 'wp-load.php');
+
+				/** 載入 WordPress 管理後台的 Update API */
+				require_once( $directory . 'wp-admin/includes/upgrade.php');
+
+				// 設定登入使用者
+				wp_set_current_user( 1 );
+
+				/*--------------------------*/
+				/*	移除預設內容
+				/*--------------------------*/
+
+				if ( isset($_POST['delete_default_content']) && (int) $_POST['delete_default_content'] == 1 ) {
+					wp_delete_post( 1, true ); // Remove the article "Hello World"
+					wp_delete_post( 2, true ); // Remove the "Exemple page"
+					wp_delete_post( 3, true ); // Remove the "Privacy policy page"
+				}
+
+				/*--------------------------*/
+				/*	匯入佈景主題預覽內容
+				/*--------------------------*/
+
+				if ( isset($_POST['theme_preview_content']) && (int) $_POST['theme_preview_content'] == 1 ) {
+					// 下載佈景主題測試內容的最新版本
+					file_put_contents( WPQI_CACHE_PATH . 'theme-preview.xml', file_get_contents( 'https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/theme-preview.xml' ) );
+
+					// 下載 WordPress 內容匯入程式的最新版本
+					$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/wordpress-importer.json" );
+					if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
+						$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
+						if ( ! file_exists( $plugin_path ) ) {
+							if ( $download_link = file_get_contents( $plugin->download_link ) ) {
+								file_put_contents( $plugin_path, $download_link );
+							}
+						}
+
+						// 解壓縮外掛安裝套件
+						$zip = new ZipArchive;
+						if ( $zip->open( $plugin_path ) === true ) {
+							$zip->extractTo( WPQI_CACHE_PATH );
+							$zip->close();
+						}
+					}
+
+					if( is_dir( WPQI_CACHE_PATH . 'wordpress-importer' ) ) {
+						if( !defined( 'WP_LOAD_IMPORTERS' ) ) {
+							define( 'WP_LOAD_IMPORTERS', true );
+							require_once( WPQI_CACHE_PATH . 'wordpress-importer/wordpress-importer.php');
+						}
+
+						$WP_Import = new WP_Import();
+						$WP_Import->fetch_attachments = true;
+						$import_data = $WP_Import->parse( WPQI_CACHE_PATH . 'theme-preview.xml' );
+						foreach( $import_data['authors'] as $author_info ) {
+							$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+						}
+						$WP_Import->import( WPQI_CACHE_PATH . 'theme-preview.xml' );
+					}
+				}
+
+				/*--------------------------*/
+				/*	匯入佈景主題測試內容
+				/*--------------------------*/
+
+				if ( isset($_POST['theme_test_content']) && (int) $_POST['theme_test_content'] == 1 ) {
+					// 下載佈景主題測試內容的最新版本
+					file_put_contents( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml', file_get_contents( 'https://raw.githubusercontent.com/WPTRT/theme-unit-test/master/themeunittestdata.wordpress.xml' ) );
+
+					// 下載 WordPress 內容匯入程式的最新版本
+					$plugin_repo = file_get_contents( "https://api.wordpress.org/plugins/info/1.0/wordpress-importer.json" );
+					if ( $plugin_repo && $plugin = json_decode( $plugin_repo ) ) {
+						$plugin_path = WPQI_CACHE_PLUGINS_PATH . $plugin->slug . '-' . $plugin->version . '.zip';
+						if ( ! file_exists( $plugin_path ) ) {
+							if ( $download_link = file_get_contents( $plugin->download_link ) ) {
+								file_put_contents( $plugin_path, $download_link );
+							}
+						}
+
+						// 解壓縮外掛安裝套件
+						$zip = new ZipArchive;
+						if ( $zip->open( $plugin_path ) === true ) {
+							$zip->extractTo( WPQI_CACHE_PATH );
+							$zip->close();
+						}
+					}
+
+					if( is_dir( WPQI_CACHE_PATH . 'wordpress-importer' ) ) {
+						if( !defined( 'WP_LOAD_IMPORTERS' ) ) {
+							define( 'WP_LOAD_IMPORTERS', true );
+							require_once( WPQI_CACHE_PATH . 'wordpress-importer/wordpress-importer.php');
+						}
+
+						if ( class_exists( 'WP_Import' ) ) {
+							$WP_Import = new WP_Import();
+							$WP_Import->fetch_attachments = true;
+							$import_data = $WP_Import->parse( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml' );
+							foreach( $import_data['authors'] as $author_info ) {
+								$WP_Import->author_mapping[$author_info['author_login']] = wp_create_user( $author_info['author_login'], wp_generate_password() );
+							}
+							$WP_Import->import( WPQI_CACHE_PATH . 'themeunittestdata.wordpress.xml' );
+						}
+					}
+				}
 
 				/*--------------------------*/
 				/*	新增在 data.ini 檔案中找到的頁面
@@ -774,11 +874,6 @@ else { ?>
 						<td><input name="prefix" id="prefix" type="text" value="wp_" size="18" class="required" /></td>
 						<td><?php echo _('如需在同一個資料庫中安裝多個 WordPress，請修改這個欄位中的預設設定。'); ?></td>
 					</tr>
-					<tr>
-						<th scope="row"><label for="default_content"><?php echo _('網站預設內容');?></label></th>
-						<td><label><input type="checkbox" name="default_content" id="default_content" value="1" checked="checked" /> <?php echo _('刪除網站預設內容')?></label></td>
-						<td><?php echo _('啟用這項設定後，便會在 WordPress 網站建置完成後刪除如文章、頁面、留言及連結等預設內容。');?></td>
-					</tr>
 				</table>
 
 				<h1><?php echo _('安裝必要資訊');?></h1>
@@ -840,6 +935,23 @@ else { ?>
 					<tr>
 						<th scope="row"><label for="blog_public"><?php echo _('搜尋引擎可見度');?></label></th>
 						<td><label><input type="checkbox" id="blog_public" name="blog_public" value="1" checked="checked" /> <?php echo _('開放搜尋引擎索引這個網站');?></label></td>
+					</tr>
+				</table>
+
+				<h1><?php echo _('網站內容');?></h1>
+				<p><?php echo _('在網站建置完成後，調整網站的內容。');?></p>
+				<table class="form-table">
+					<tr>
+						<th scope="row"><?php echo _('刪除網站預設內容');?></th>
+						<td><label><input type="checkbox" name="delete_default_content" id="delete_default_content" value="1" checked="checked" /><?php echo _('啟用這項設定，在 WordPress 網站建置完成後將刪除如文章、頁面、留言及連結等預設內容。');?></label></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php echo _('匯入佈景主題預覽內容');?></th>
+						<td><label><input type="checkbox" name="theme_preview_content" id="theme_preview_content" value="1" /><?php echo _('啟用這項設定，在 WordPress 網站建置完成後將匯入 https://github.com/WPTRT/theme-unit-test 提供的佈景主題預覽內容。');?></label></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php echo _('匯入佈景主題測試內容');?></th>
+						<td><label><input type="checkbox" name="theme_test_content" id="theme_test_content" value="1" /><?php echo _('啟用這項設定，在 WordPress 網站建置完成後將匯入 https://github.com/WPTRT/theme-unit-test 提供的佈景主題開發測試內容。');?></label></td>
 					</tr>
 				</table>
 

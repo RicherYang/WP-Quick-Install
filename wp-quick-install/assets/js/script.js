@@ -71,10 +71,6 @@ $(document).ready(function() {
 		if ( typeof data.db.pwd !='undefined' ) {
 			$('#pwd').val(data.db.pwd);
 		}
-
-		if ( typeof data.db.default_content !='undefined' ) {
-			( parseInt(data.db.default_content) == 1 ) ? $('#default_content').attr('checked', 'checked') : $('#default_content').removeAttr('checked');
-		}
 	}
 
 	/*--------------------------*/
@@ -95,6 +91,21 @@ $(document).ready(function() {
 			$('#admin_email').val(data.admin.email);
 		}
 
+	}
+
+	/*--------------------------*/
+	/*	網站內容
+	/*--------------------------*/
+	if ( typeof data.content.delete_default !='undefined' ) {
+		( parseInt(data.content.delete_default) == 1 ) ? $('#delete_default_content').attr('checked', 'checked') : $('#delete_default_content').removeAttr('checked');
+	}
+
+	if ( typeof data.content.theme_preview !='undefined' ) {
+		( parseInt(data.content.theme_preview) == 1 ) ? $('#theme_preview_content').attr('checked', 'checked') : $('#theme_preview_content').removeAttr('checked');
+	}
+
+	if ( typeof data.content.theme_test !='undefined' ) {
+		( parseInt(data.content.theme_test) == 1 ) ? $('#theme_test_content').attr('checked', 'checked') : $('#theme_test_content').removeAttr('checked');
 	}
 
 	/*--------------------------*/
@@ -252,6 +263,10 @@ $(document).ready(function() {
 			/*  如果沒有錯誤，便會開始安裝
 			/*--------------------------*/
 
+			$.ajaxSetup({
+				timeout: 0
+			});
+
 			$.post(window.location.href + '?action=check_before_upload', $('form').serialize(), function(data) {
 
 				errors = false;
@@ -296,7 +311,7 @@ $(document).ready(function() {
 	// 解壓縮 WordPress 核心程式安裝套件
 	function unzip_wp() {
 		$response.html("<p>正在解壓縮檔案...</p>" );
-		$('.progress-bar').animate({width: "16.5%"});
+		$('.progress-bar').animate({width: "14.3%"});
 		$.post(window.location.href + '?action=unzip_wp', $('form').serialize(), function(data) {
 			wp_config();
 		});
@@ -305,7 +320,7 @@ $(document).ready(function() {
 	// 開始建立 wp-config 檔案
 	function wp_config() {
 		$response.html("<p>建立 wp-config 檔案...</p>");
-		$('.progress-bar').animate({width: "33%"});
+		$('.progress-bar').animate({width: "28.6%"});
 		$.post(window.location.href + '?action=wp_config', $('form').serialize(), function(data) {
 			install_wp();
 		});
@@ -314,16 +329,25 @@ $(document).ready(function() {
 	// 安裝資料庫
 	function install_wp() {
 		$response.html("<p>正在安裝資料庫...</p>");
-		$('.progress-bar').animate({width: "49.5%"});
+		$('.progress-bar').animate({width: "42.9%"});
 		$.post(window.location.href + '/wp-admin/install.php?action=install_wp', $('form').serialize(), function(data) {
-			install_theme();
+			load_content();
+		});
+	}
+
+	// 設定網站內容
+	function load_content() {
+		$response.html("<p>正在設定網站內容...</p>");
+		$('.progress-bar').animate({width: "57.1%"});
+		$.post(window.location.href + '/wp-admin/install.php?action=load_content', $('form').serialize(), function(data) {
+			install_themes();
 		});
 	}
 
 	// 安裝佈景主題
-	function install_theme() {
+	function install_themes() {
 		$response.html("<p>正在安裝佈景主題...</p>");
-		$('.progress-bar').animate({width: "66%"});
+		$('.progress-bar').animate({width: "71.4%"});
 		$.post(window.location.href + '/wp-admin/install.php?action=install_themes', $('form').serialize(), function(data) {
 			install_plugins();
 		});
@@ -332,7 +356,7 @@ $(document).ready(function() {
 	// 安裝外掛
 	function install_plugins() {
 		$response.html("<p>正在安裝外掛...</p>");
-		$('.progress-bar').animate({width: "82.5%"});
+		$('.progress-bar').animate({width: "85.7%"});
 		$.post(window.location.href + '?action=install_plugins', $('form').serialize(), function(data) {
 			$response.html(data);
 			success();
