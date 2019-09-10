@@ -1,4 +1,4 @@
-WP Quick Install 1.5.3 台灣繁體中文版
+WP Quick Install 1.5.4 台灣繁體中文版
 ================
 
 WP Quick Install 提供了安裝 WordPress 網站最簡單的方式。
@@ -9,6 +9,11 @@ WP Quick Install 提供了安裝 WordPress 網站最簡單的方式。
 
 變更記錄
 ================
+
+1.5.4
+-----------
+* 支援匯入由 WordPress 網站會出的網站內容檔案
+* Contributor: [Richer Yang](https://github.com/RicherYang/WP-Quick-Install) 
 
 1.5.3
 -----------
